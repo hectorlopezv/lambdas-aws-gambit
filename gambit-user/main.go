@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"gambit-user/awsgo"
+	"gambit-user/db"
 	"gambit-user/models"
 	"os"
 
@@ -17,9 +18,10 @@ func main(){
 	
 }
 
-func LambdaHandler(ctx context.Context, event events.CognitoEventUserPoolsPostConfirmation)(x interface {}, err error){
+func LambdaHandler(ctx context.Context, event events.CognitoEventUserPoolsPostConfirmation)( interface {}, error){
 
 	awsgo.InicializaAws()
+	var err error
 
 	//Valida que se hayan pasado los parametros
 	if !ValidateParams() {
@@ -28,6 +30,22 @@ func LambdaHandler(ctx context.Context, event events.CognitoEventUserPoolsPostCo
 		return event, err
 	}
 	var datos models.SignUp
+	for row, att := range event.Request.UserAttributes {
+		switch row {
+		case "email":
+			datos.UserEmail = att
+			fmt.Println("Email = "+ datos.UserEmail)
+		case "sub":
+		datos.UserUUID = att
+		fmt.Println("sub = "+ datos.UserUUID)
+		}
+	}
+
+	err = db.ReadSecret()
+	if err != nil {
+		fmt.Println("Error al leer el secret manager")
+		return event, err
+	}
 
 }
 
