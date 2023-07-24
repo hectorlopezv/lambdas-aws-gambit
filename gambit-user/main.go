@@ -18,7 +18,7 @@ func main(){
 	
 }
 
-func LambdaHandler(ctx context.Context, event events.CognitoEventUserPoolsPostConfirmation)( interface {}, error){
+func LambdaHandler(ctx context.Context, event events.CognitoEventUserPoolsPostConfirmation)(  events.CognitoEventUserPoolsPostConfirmation, error){
 
 	awsgo.InicializaAws()
 	var err error
@@ -26,7 +26,7 @@ func LambdaHandler(ctx context.Context, event events.CognitoEventUserPoolsPostCo
 	//Valida que se hayan pasado los parametros
 	if !ValidateParams() {
 		fmt.Println("No se pasaron los parametros, deben enviar secret manager")
-		err = errors.New("No se pasaron los parametros, deben enviar secret manager")
+		err = errors.New("no se pasaron los parametros, deben enviar secret manager")
 		return event, err
 	}
 	var datos models.SignUp
@@ -36,8 +36,8 @@ func LambdaHandler(ctx context.Context, event events.CognitoEventUserPoolsPostCo
 			datos.UserEmail = att
 			fmt.Println("Email = "+ datos.UserEmail)
 		case "sub":
-		datos.UserUUID = att
-		fmt.Println("sub = "+ datos.UserUUID)
+			datos.UserUUID = att
+			fmt.Println("sub = "+ datos.UserUUID)
 		}
 	}
 
@@ -46,6 +46,8 @@ func LambdaHandler(ctx context.Context, event events.CognitoEventUserPoolsPostCo
 		fmt.Println("Error al leer el secret manager")
 		return event, err
 	}
+	err = db.SignUp(datos)
+	return event, err
 
 }
 
