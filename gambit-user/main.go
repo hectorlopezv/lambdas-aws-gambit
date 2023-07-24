@@ -43,7 +43,7 @@ func LambdaHandler(ctx context.Context, event events.CognitoEventUserPoolsPostCo
 		fmt.Println("Error al leer el secret manager")
 		return event, err
 	}
-	err = db.SignUp(datos)
+	 err = db.SignUp(datos)
 	return event, err
 
 }

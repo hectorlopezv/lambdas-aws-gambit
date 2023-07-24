@@ -2,7 +2,6 @@ package secretm
 
 import (
 	"encoding/json"
-	"fmt"
 	"gambit-user/awsgo"
 	"gambit-user/models"
 
@@ -12,22 +11,31 @@ import (
 
 
 
-func GetSecret(nombreSecret string)(models.SecretRDSJson, error){
+func GetSecret(secretName string) (models.SecretRDSJson, error) {
+	var secretData models.SecretRDSJson
+	svc := secretsmanager.NewFromConfig(awsgo.Cfg)
 
-	var datosSecret models.SecretRDSJson
-	var err error
-	fmt.Println(" > GetSecret"+nombreSecret)
-
-	svc:= secretsmanager.NewFromConfig(awsgo.Cfg)
-	clave, err := svc.GetSecretValue(awsgo.Ctx, &secretsmanager.GetSecretValueInput{
-		SecretId: aws.String(nombreSecret),
-	})
+	input := &secretsmanager.GetSecretValueInput{
+		SecretId:     aws.String(secretName),
+	}
+	result, err := svc.GetSecretValue(awsgo.Ctx, input)
 	if err != nil {
-		fmt.Println("Error al obtener el secret manager: "+err.Error())
-		return datosSecret, err
+		println("Error en GetSecretValue", err.Error())
+		return secretData, err
 	}
 
-	json.Unmarshal([]byte(*clave.SecretString), &datosSecret)
-	fmt.Println("Secret obtenido: "+nombreSecret)
-	return datosSecret, nil
+	var secretString string
+	if result.SecretString != nil {
+		secretString = *result.SecretString
+	}
+	
+
+
+	err = json.Unmarshal([]byte(secretString), &secretData)
+	if err != nil {
+		println("Error en Unmarshal", err.Error())
+		return secretData, err
+	}
+
+	return secretData,nil
 }

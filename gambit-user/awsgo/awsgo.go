@@ -14,9 +14,11 @@ var Cfg aws.Config
 var err error
 func InicializaAws(){
 	Ctx = context.TODO()
-	Cfg, err = config.LoadDefaultConfig(Ctx, config.WithDefaultRegion("us-east-1"))
+	Cfg, err =  config.LoadDefaultConfig(Ctx, config.WithRegion("us-east-1"))
+
 	if err != nil {
-		panic("No se puede inicializar AWS, error en carga la configuracion aws/condig"+err.Error())
+		// panic("No se puede inicializar AWS, error en carga la configuracion aws/condig"+err.Error())
+		println("No se puede inicializar AWS, error en carga la configuracion aws/condig"+err.Error())
 	}
 
 }

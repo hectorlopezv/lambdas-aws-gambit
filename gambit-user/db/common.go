@@ -1,6 +1,7 @@
 package db
 
 import (
+	"encoding/json"
 	"database/sql"
 	"fmt"
 	"gambit-user/models"
@@ -17,6 +18,8 @@ func ReadSecret()error{
 	return err
 }
 func DbConnect() error {
+	val, _ := json.MarshalIndent(SecretModel, "", "    ")
+	fmt.Println(string(val))
 	Db, err = sql.Open("mysql",ConnStr(SecretModel))
 	if err != nil {
 		fmt.Println(err.Error())
